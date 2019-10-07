@@ -11,45 +11,138 @@ class Graph:
         """
         Add a vertex to the graph.
         """
+        self.vertices[vertex] = set()
         pass  # TODO
     def add_edge(self, v1, v2):
         """
         Add a directed edge to the graph.
         """
+        if v1 in self.vertices and v2 in self.vertices:
+            self.vertices[v1].add(v2)
+        else:
+            raise IndexError("Can not create edge based on given vertics!")
         pass  # TODO
     def bft(self, starting_vertex):
         """
         Print each vertex in breadth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        qq = Queue()
+
+        visited = set()
+
+        qq.enqueue(starting_vertex)
+        while qq.size() > 0:
+            vertex = qq.dequeue()
+            if vertex not in visited:
+                visited.add(vertex)
+                print(vertex)
+                for next_vert in self.vertices[vertex]:
+                    qq.enqueue(next_vert)
+        
     def dft(self, starting_vertex):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
-    def dft_recursive(self, starting_vertex):
+        stack = Stack()
+
+        visited = set()
+
+        stack.push(starting_vertex)
+        while stack.size() > 0:
+            vertex = stack.pop()
+            if vertex not in visited:
+                visited.add(vertex)
+                print(vertex)
+                for next_vert in self.vertices[vertex]:
+                    stack.push(next_vert)
+
+          
+    def dft_recursive(self, starting_vertex, visited=None):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
         This should be done using recursion.
         """
-        pass  # TODO
+        print(starting_vertex)
+        if visited is None:
+            visited = set()
+
+        if starting_vertex not in visited:
+            # print starting_vertex
+            visited.add(starting_vertex)
+
+            for neighbor in self.vertices[starting_vertex]:
+                if neighbor not in visited:
+                    self.dft_recursive(neighbor, visited)
+
+        # pass
+          # TODO
     def bfs(self, starting_vertex, destination_vertex):
         """
         Return a list containing the shortest path from
         starting_vertex to destination_vertex in
         breath-first order.
         """
-        pass  # TODO
+        queue = [[starting_vertex]]
+        visited = []
+
+        if starting_vertex == destination_vertex:
+            print("Starting vertex = Destination vertex")
+            return
+
+        while queue:
+            path = queue.pop(0)                         # pop the first path from queue
+            node = path[-1]                     # get the last node from path
+            if node not in visited:
+                neighbors = self.vertices[node]
+                for neighbor in neighbors:      # go through all neighbor node
+                    new_path = list(path)   # construct new
+                    new_path.append(neighbor)   #add in the neighbors
+                    queue.append(new_path)
+
+                    if neighbor == destination_vertex:  # return path if neighbor equals goal
+                        return new_path
+
+                visited.append(node)    # mark as explored
+        
+        return "Connecting path doesn't exist"
+
+        # pass 
+     # TODO
     def dfs(self, starting_vertex, destination_vertex):
         """
         Return a list containing a path from
         starting_vertex to destination_vertex in
         depth-first order.
         """
-        pass  # TODO
+        queue = [[starting_vertex]]
+        visited = []
+
+        if starting_vertex == destination_vertex:
+            print("Starting vertex = Destination vertex")
+            return
+
+        while queue:
+            path = queue.pop(0)
+            node = path[-1]
+            if node not in visited:
+                neighbors = self.vertices[node]
+                for neighbor in neighbors:
+                    new_path = list(path)
+                    new_path.append(neighbor)
+                    queue.append(new_path)
+
+                    if neighbor == destination_vertex:
+                        return new_path
+
+                visited.append(node)
+        
+        return "Connecting path doesn't exist"
+
+        # pass  
+    # TODO
 
 
 
@@ -89,6 +182,7 @@ if __name__ == '__main__':
         1, 2, 4, 7, 6, 3, 5
         1, 2, 4, 6, 3, 5, 7
     '''
+    print("starting DFT")
     graph.dft(1)
 
     '''
@@ -106,6 +200,7 @@ if __name__ == '__main__':
         1, 2, 4, 3, 7, 6, 5
         1, 2, 4, 3, 7, 5, 6
     '''
+    print("starting BFT")
     graph.bft(1)
 
     '''
@@ -115,12 +210,14 @@ if __name__ == '__main__':
         1, 2, 4, 7, 6, 3, 5
         1, 2, 4, 6, 3, 5, 7
     '''
+    print("starting DFT Recursive")
     graph.dft_recursive(1)
 
     '''
     Valid BFS path:
         [1, 2, 4, 6]
     '''
+    print("starting BFS")
     print(graph.bfs(1, 6))
 
     '''
@@ -128,4 +225,5 @@ if __name__ == '__main__':
         [1, 2, 4, 6]
         [1, 2, 4, 7, 6]
     '''
+    print("starting DFS")
     print(graph.dfs(1, 6))
