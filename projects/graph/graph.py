@@ -125,7 +125,7 @@ class Graph:
             return
 
         while queue:
-            path = queue.pop(0)
+            path = queue.pop()
             node = path[-1]
             if node not in visited:
                 neighbors = self.vertices[node]
