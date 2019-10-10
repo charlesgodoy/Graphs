@@ -1,4 +1,34 @@
+import random
 
+def bfs(graph, starting_vertex, destination_vertex):
+    """
+    Return a list containing the shortest path from
+    starting_vertex to destination_vertex in
+    breath-first order.
+    """
+    queue = [[starting_vertex]]
+    visited = []
+
+    if starting_vertex == destination_vertex:
+        return [starting_vertex]
+
+    while queue:
+        path = queue.pop(0)                         # pop the first path from queue
+        node = path[-1]                     # get the last node from path
+        if node not in visited:
+            neighbors = graph[node]
+            for neighbor in neighbors:      # go through all neighbor node
+                new_path = list(path)   # construct new
+                new_path.append(neighbor)   #add in the neighbors
+                queue.append(new_path)
+
+                if neighbor == destination_vertex:  # return path if neighbor equals goal
+                    return new_path
+
+            visited.append(node)    # mark as explored
+
+    # Connecting path doesn't exist
+    return None
 
 class User:
     def __init__(self, name):
@@ -45,10 +75,25 @@ class SocialGraph:
         self.users = {}
         self.friendships = {}
         # !!!! IMPLEMENT ME
-
         # Add users
+        for i in range(numUsers):
+            self.addUser(str(i + 1))
+
+        print("All Users")
 
         # Create friendships
+        all_possible_combinations = []
+        for i in range(numUsers):
+            for j in range(numUsers):
+                if i < j:
+                    all_possible_combinations.append((i + 1, j + 1))
+
+        print("List of all possible combinations")
+        print(all_possible_combinations)
+        random.shuffle(all_possible_combinations)
+        num_friendships = numUsers * avgFriendships
+        for userID, friendID in all_possible_combinations[:num_friendships]:
+            self.addFriendship(userID, friendID)
 
     def getAllSocialPaths(self, userID):
         """
@@ -60,13 +105,19 @@ class SocialGraph:
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+        for friendID in self.users.keys():
+            path = bfs(self.friendships, userID, friendID)
+            if path is not None: # path exists
+                visited[friendID] = path        
+
         return visited
 
 
 if __name__ == '__main__':
     sg = SocialGraph()
+    print("Start of Populate Graph")
     sg.populateGraph(10, 2)
     print(sg.friendships)
-    connections = sg.getAllSocialPaths(1)
+    print("Start of Get All Social")
+    connections = sg.getAllSocialPaths(2)
     print(connections)
